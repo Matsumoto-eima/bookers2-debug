@@ -1,11 +1,16 @@
-<div class='container'>
+<p id = "notice"></p>
+<div class='container px-5'>
   <div class='row'>
+
     <div class='col-md-3'>
       <h2>User info</h2>
-      <%= render 'users/info' %>
+      <table>
+      <%= render 'users/info', user: @book.user %>
       <h2 class="mt-3">New book</h2>
-      <%= render 'form', book: @book %>
-    </div>
+      <%= render 'books/form', book: @book_new %>
+   </table>
+ </div>
+ </div>
     <div class='col-md-8 offset-md-1'>
   		<h2>Book detail</h2>
   		<table class='table'>
@@ -17,10 +22,44 @@
           </td>
           <td><%= link_to @book.title, @book %></td>
           <td><%= @book.body %></td>
+          <% if @book.user == current_user %>
             <td><%= link_to 'Edit', edit_book_path(@book), class: "btn btn-sm btn-success" %></td>
             <td><%= link_to 'Destroy', @book, method: :delete, data: { confirm: '本当に消しますか？' }, class: "btn btn-sm btn-danger"%></td>
+            <% else %>
+             <% if @book.favorited_by?(current_user) %>
+    <p>
+      <%= link_to book_favorites_path(@book.id), method: :delete do %>
+        ♥<%= @book.favorites.count %>
+        <% end %>
+    </p>
+    <% else %>
+    <p>
+      <%= link_to book_favorites_path(@book.id), method: :delete do %>
+        ♡<%= @book.favorites.count %>
+        <% end %>
+    </p>
+  <% end %>
+  <div>
+  <p>コメント件数：<%= @post_image.post_comments.count %></p>
+
+  <% @post_image.post_comments.each do |post_comment| %>
+    <p><%= image_tag post_comment.user.get_profile_image(100,100) %></p>
+    <%= post_comment.user.name %>
+    <% if post_comment.user == current_user %>
+      <%= link_to "削除", post_image_spost_comment_path(post_comment.post_image, post_comment), method: :delete %>
+    <% end %>
+    <% end %>
+  </div>
+  <div>
+  <%= form_with model: [@post_image, @post_comment] do |f| %>
+    <%= f.text_area :comment, rows: '5', placeholder: "コメントをここに" %>
+    <%= f.submit "送信する" %>
+  <% end %>
+</div>
+
         </tr>
       </table>
+      <% end %>
     </div>
   </div>
 </div>
