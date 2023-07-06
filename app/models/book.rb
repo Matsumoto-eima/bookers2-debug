@@ -6,13 +6,13 @@ class Book < ApplicationRecord
   validates :body,presence:true,length:{maximum:200}
 
   def self.looks(search, word)
-    if search == "perfect_match"
+    if search == "perfect"
       @book = Book.where("title LIKE?","#{word}")
-    elsif search == "forward_match"
+    elsif search == "forward"
       @book = Book.where("title LIKE?","#{word}%")
-    elsif search == "backward_match"
+    elsif search == "backward"
       @book = Book.where("title LIKE?","%#{word}")
-    elsif search == "partial_match"
+    elsif search == "partial"
       @book = Book.where("title LIKE?","%#{word}%")
     else
       @book = Book.all
