@@ -3,7 +3,9 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
-
+  has_many :user_rooms, dependent: :destroy
+  has_many :chats, dependent: :destroy
+  has_many :rooms , through: :user_rooms
   has_many :books, dependent: :destroy
   has_many :book_comments, dependent: :destroy
   has_one_attached :profile_image
@@ -12,6 +14,7 @@ class User < ApplicationRecord
   has_many :followed, class_name: "Relationship", foreign_key: "followed_id", dependent: :destroy
   has_many :following_user, through: :follower, source: :followed # 自分がフォローしている人
   has_many :follower_user, through: :followed, source: :follower # 自分をフォローしている人
+
 
   validates :name, length: { minimum: 2, maximum: 20 }, uniqueness: true
   validates :introduction, length: {maximum: 50}
